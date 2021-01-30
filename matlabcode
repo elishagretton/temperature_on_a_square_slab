@@ -1,0 +1,45 @@
+%we will solve the equation Au=b
+%create my matrix A
+A = zeros(81,81);
+for k =1:81
+    A(k,k)=4; %leading diagonal values are 4
+end
+for k=1:80
+    A(k,k+1)=-1; %create diagonal below main diagonal 
+    %all values are -1
+end
+for k=1:80
+    A(k+1,k)=-1; %create diagonal above main diagonal
+    %all values are -1
+end
+for k=10:81
+    A(k-9,k)=-1; %for diagonal starting at z(1,10)
+    %make values -1
+end
+
+%create matrix b of our solutions
+b = zeros(81,0); %empty matrix 81 x 1
+for k=73:81 %for the nodes P(9,1) to P(9,9), these are the only nodes
+    % that will have a solution that isn't 0
+    % as it's affected by top boundary where u = 100sin(pi*x/100)
+    % all other nodes the temperatures we know is when u = 0
+    x = k - 72;
+    b(k,1)=100*sin((pi*k)/100);
+end
+
+%solve to get u
+Ai = inv(A);
+u = Ai*b;
+
+%now to plot the temperature distribution graph
+x = zeros(9,9); %create empty 9 x9 vector where we wll store steady 
+%state temperatures for each node
+for i=1:9 %for each node in row
+    for j=1:9 %for each node in column
+        x(i,j)=u(j+(i-1)*(9)); %let the corresponding temperature of each node
+        %in u, be placed in the x matrix at certain point
+    end
+end
+
+[i,j]=meshgrid(1:1:9,1:1:9); %create x and y axis, 1-9
+[c,h]=contourf(i,j,x); %create temp dist graph using contours
